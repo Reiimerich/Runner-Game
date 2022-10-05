@@ -3,8 +3,16 @@
 int main()
 {
     //Window Dimensions
-    int WindowHeight{600};
-    int WindowWidth{900};
+    const int WindowHeight{600};
+    const int WindowWidth{900};
+
+    //Rectangle Dimensions
+    const int width{50};
+    const int height{80};
+
+    //Player Movement
+    int InitialPositionY{WindowHeight - height};
+    int Velocity{0};
 
     //Create Window
     InitWindow(WindowWidth,WindowHeight,"Runner Game");
@@ -15,6 +23,17 @@ int main()
         //Start Drawing
         BeginDrawing();
         ClearBackground(BLUE);
+
+        //Update X position
+        InitialPositionY += Velocity;
+
+        //Draw Rectangle
+        DrawRectangle(WindowWidth/2, InitialPositionY, width,height,RED);
+
+        if(IsKeyPressed(KEY_SPACE))
+        {
+            Velocity = -10;
+        }
 
         //End Drawing
         EndDrawing();
