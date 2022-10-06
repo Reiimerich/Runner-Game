@@ -14,6 +14,9 @@ int main()
     int InitialPositionY{WindowHeight - height};
     int Velocity{0};
 
+    //Physics
+    const int Gravity{1};
+
     //Create Window
     InitWindow(WindowWidth,WindowHeight,"Runner Game");
     
@@ -24,8 +27,15 @@ int main()
         BeginDrawing();
         ClearBackground(BLUE);
 
-        //Update X position
-        InitialPositionY += Velocity;
+        //Apply gravity
+        if(InitialPositionY >= WindowHeight - height)
+        {
+            Velocity = 0;
+        }
+        else
+        {
+            Velocity += Gravity;
+        }
 
         //Draw Rectangle
         DrawRectangle(WindowWidth/2, InitialPositionY, width,height,RED);
@@ -34,6 +44,9 @@ int main()
         {
             Velocity = -10;
         }
+
+        //Update X position
+        InitialPositionY += Velocity;
 
         //End Drawing
         EndDrawing();
