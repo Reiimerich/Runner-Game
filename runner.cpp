@@ -18,6 +18,11 @@ int main()
     const int Gravity{1};
     bool IsJumping{};
 
+    //Sprites
+    Texture2D Player = LoadTexture("textures/monster.png");
+    Rectangle PlayerRec;
+    Vector2 PlayerPos;
+
     //Jump Height
     const int JumpHeight{20};
 
