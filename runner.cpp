@@ -16,6 +16,10 @@ int main()
 
     //Physics
     const int Gravity{1};
+    bool IsJumping{};
+
+    //Jump Height
+    const int JumpHeight{20};
 
     //Create Window
     InitWindow(WindowWidth,WindowHeight,"Runner Game");
@@ -31,18 +35,20 @@ int main()
         if(InitialPositionY >= WindowHeight - height)
         {
             Velocity = 0;
+            IsJumping = false;
         }
         else
         {
             Velocity += Gravity;
+            IsJumping = true;
         }
 
         //Draw Rectangle
         DrawRectangle(WindowWidth/2, InitialPositionY, width,height,RED);
 
-        if(IsKeyPressed(KEY_SPACE))
+        if(IsKeyPressed(KEY_SPACE) && !IsJumping)
         {
-            Velocity = -10;
+            Velocity -= JumpHeight;
         }
 
         //Update X position
