@@ -12,7 +12,7 @@ int main()
     int Velocity{0};
 
     //Physics
-    const int Gravity{1};
+    const int Gravity{1'000};
     bool IsJumping{};
 
     //Sprites
@@ -28,15 +28,20 @@ int main()
     PlayerPos.x = WindowWidth/2 - PlayerRec.width/2;
     PlayerPos.y = WindowHeight - PlayerRec.height;
 
-    //Jump Height
-    const int JumpHeight{20};
+    //Jump Height (Pixels/Second)
+    const int JumpHeight{600};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
+        //Add DeltaTime to balance framerate
+        const float DeltaTime{GetFrameTime()};
+
         //Start Drawing
         BeginDrawing();
         ClearBackground(BLUE);
+
+        
 
         //Apply gravity
         if(PlayerPos.y >= WindowHeight - PlayerRec.height)
@@ -46,7 +51,7 @@ int main()
         }
         else
         {
-            Velocity += Gravity;
+            Velocity += Gravity * DeltaTime;
             IsJumping = true;
         }
 
@@ -59,7 +64,7 @@ int main()
         }
 
         //Update X position
-        PlayerPos.y += Velocity;
+        PlayerPos.y += Velocity * DeltaTime;
 
         //End Drawing
         EndDrawing();
