@@ -12,8 +12,13 @@ int main()
     int Velocity{0};
 
     //Physics
-    const int Gravity{1'000};
+    const int Gravity{1000};
     bool IsJumping{};
+
+    //Animation Frame
+    int Frame{};
+    const float UpdateTime{1.0/12.0};
+    float RunningTime{};
 
     //Sprites
     Texture2D Player = LoadTexture("textures/scarfy.png");
@@ -41,8 +46,6 @@ int main()
         BeginDrawing();
         ClearBackground(BLUE);
 
-        
-
         //Apply gravity
         if(PlayerPos.y >= WindowHeight - PlayerRec.height)
         {
@@ -55,9 +58,6 @@ int main()
             IsJumping = true;
         }
 
-        //Draw Player
-        DrawTextureRec(Player, PlayerRec, PlayerPos, WHITE);
-
         if(IsKeyPressed(KEY_SPACE) && !IsJumping)
         {
             Velocity -= JumpHeight;
@@ -65,6 +65,23 @@ int main()
 
         //Update X position
         PlayerPos.y += Velocity * DeltaTime;
+
+        // update running time
+        RunningTime += DeltaTime;
+        if (RunningTime >= UpdateTime)
+        {
+            RunningTime = 0.0;
+            // update animation frame
+            PlayerRec.x = Frame * PlayerRec.width;
+            Frame++;
+            if (Frame > 5)
+            {
+                Frame = 0;
+            }
+        }
+
+        //Draw Player
+        DrawTextureRec(Player, PlayerRec, PlayerPos, WHITE);
 
         //End Drawing
         EndDrawing();
