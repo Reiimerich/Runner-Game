@@ -20,15 +20,22 @@ int main()
     const float UpdateTime{1.0/12.0};
     float RunningTime{};
 
+    //Obstacle Sprites
+    Texture2D Obstacle = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle ObstacleRec{0.0, 0.0, Obstacle.width/8, Obstacle.height/8};
+    Vector2 ObstaclePos{WindowWidth, WindowHeight - ObstacleRec.height};
+
+    Rectangle Obstacle2Rec{0.0, 0.0, Obstacle.width/8, Obstacle.height/8};
+    Vector2 Obstacle2Pos{WindowWidth + 300, WindowHeight - ObstacleRec.height};
+
     //Obstacle Animation Frame
     int ObsFrame{};
     const float ObstacleUpdateTime{1.0/12.0};
     float ObstacleRunningTime{};
 
-    //Obstacle Sprites
-    Texture2D Obstacle = LoadTexture("textures/12_nebula_spritesheet.png");
-    Rectangle ObstacleRec{0.0, 0.0, Obstacle.width/8, Obstacle.height/8};
-    Vector2 ObstaclePos{WindowWidth, WindowHeight - ObstacleRec.height};
+    int ObsFrame2{};
+    const float Obstacle2UpdateTime{1.0/16.0};
+    float Obstacle2RunningTime{};
 
     //Obstacle velocity
     int ObstacleVel{-600};
@@ -110,14 +117,25 @@ int main()
             {
                 ObsFrame = 0;
             }
-            
+        }
+
+        if (Obstacle2RunningTime >= Obstacle2UpdateTime)
+        {
+            Obstacle2RunningTime = 0.0;
+            Obstacle2Rec.x = ObsFrame2 * Obstacle2Rec.width;
+            ObsFrame2++;
+            if (ObsFrame2 > 7)
+            {
+                ObsFrame2 = 0;
+            }
         }
 
         //Draw Player
         DrawTextureRec(Player, PlayerRec, PlayerPos, WHITE);
 
         //Draw Obstacle
-        DrawTextureRec(Obstacle,ObstacleRec,ObstaclePos, WHITE);
+        DrawTextureRec(Obstacle, ObstacleRec, ObstaclePos, WHITE);
+        DrawTextureRec(Obstacle, Obstacle2Rec, Obstacle2Pos, WHITE);
         
         //End Drawing
         EndDrawing();
