@@ -15,12 +15,25 @@ int main()
     const int Gravity{1000};
     bool IsJumping{};
 
-    //Animation Frame
+    //Player Animation Frame
     int Frame{};
     const float UpdateTime{1.0/12.0};
     float RunningTime{};
 
-    //Sprites
+    //Obstacle Animation Frame
+    int ObsFrame{};
+    const float ObstacleUpdateTime{1.0/12.0};
+    float ObstacleRunningTime{};
+
+    //Obstacle Sprites
+    Texture2D Obstacle = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle ObstacleRec{0.0, 0.0, Obstacle.width/8, Obstacle.height/8};
+    Vector2 ObstaclePos{WindowWidth, WindowHeight - ObstacleRec.height};
+
+    //Obstacle velocity
+    int ObstacleVel{-600};
+    
+    //Player Sprites
     Texture2D Player = LoadTexture("textures/scarfy.png");
     Rectangle PlayerRec;
     PlayerRec.width = Player.width/6;
@@ -63,29 +76,53 @@ int main()
             Velocity -= JumpHeight;
         }
 
+        //Update Obstacle Position
+        ObstaclePos.x += ObstacleVel * DeltaTime;
+
         //Update X position
         PlayerPos.y += Velocity * DeltaTime;
 
-        // update running time
+        //Update running time
         RunningTime += DeltaTime;
+        ObstacleRunningTime += DeltaTime;
+
         if (RunningTime >= UpdateTime)
         {
             RunningTime = 0.0;
-            // update animation frame
-            PlayerRec.x = Frame * PlayerRec.width;
-            Frame++;
-            if (Frame > 5)
+            if (!IsJumping)
             {
-                Frame = 0;
+                // update animation frame
+                PlayerRec.x = Frame * PlayerRec.width;
+                Frame++;
+                if (Frame > 5)
+                {
+                    Frame = 0;
+                }
             }
+        }
+
+        if (ObstacleRunningTime >= ObstacleUpdateTime)
+        {
+            ObstacleRunningTime = 0.0;
+            ObstacleRec.x = ObsFrame * ObstacleRec.width;
+            ObsFrame++;
+            if (ObsFrame > 7)
+            {
+                ObsFrame = 0;
+            }
+            
         }
 
         //Draw Player
         DrawTextureRec(Player, PlayerRec, PlayerPos, WHITE);
 
+        //Draw Obstacle
+        DrawTextureRec(Obstacle,ObstacleRec,ObstaclePos, WHITE);
+        
         //End Drawing
         EndDrawing();
     }
     UnloadTexture(Player);
+    UnloadTexture(Obstacle);
     CloseWindow();
 }
