@@ -30,21 +30,22 @@ int main()
     //Obstacle Sprites
     Texture2D Obstacle = LoadTexture("textures/12_nebula_spritesheet.png");
 
-    AnimData Obstacle1{{0.0,0.0,Obstacle.width/8, Obstacle.height/8}, //Rectangle Rect
-    {WindowDimensions[0], WindowDimensions[1] - Obstacle.height/8}, //Vector 2 Position
-    0, //Int Frame
-    1.0/12.0, //Float Update Time
-    0.0, //Float Running Time
-    -200}; //Velocity
+    const int NumberOfObstacleArray{15};
+    AnimData ObstacleArray[NumberOfObstacleArray]{};
 
-    AnimData Obstacle2{{0.0,0.0,Obstacle.width/8, Obstacle.height/8}, //Rectangle Rect
-    {WindowDimensions[0] + 300, WindowDimensions[1] - Obstacle.height/8}, //Vector 2 Position
-    0, //Int Frame
-    1.0/16.0, //Float Update Time
-    0.0, //Float Running Time
-    -200}; //Velocity
-
-    AnimData Obstacles[2]{Obstacle1, Obstacle2};
+    for (int i = 0; i < NumberOfObstacleArray; i++)
+    {
+        ObstacleArray[i].Rec.x = 0.0;
+        ObstacleArray[i].Rec.y = 0.0;
+        ObstacleArray[i].Rec.width = Obstacle.width/8;
+        ObstacleArray[i].Rec.height = Obstacle.height/8;
+        ObstacleArray[i].Pos.y = WindowDimensions[1] - Obstacle.height/8;
+        ObstacleArray[i].Frame = 0;
+        ObstacleArray[i].RunningTime = 0.0;
+        ObstacleArray[i].Velocity = -300;
+        ObstacleArray[i].UpdateTime = 0.0;
+        ObstacleArray[i].Pos.x = WindowDimensions[0] + i * 300;
+    }
 
     //Player Sprites
     Texture2D Player = LoadTexture("textures/scarfy.png");
@@ -85,17 +86,17 @@ int main()
             PlayerData.Velocity -= JumpHeight;
         }
 
-        //Update Obstacle Position
-        Obstacles[0].Pos.x += Obstacles[0].Velocity * DeltaTime;
-        Obstacles[1].Pos.x += Obstacles[1].Velocity * DeltaTime;
-
+        //Update Each Obstacle Position
+        for (int i = 0; i < NumberOfObstacleArray; i++)
+        {
+            ObstacleArray[i].Pos.x += ObstacleArray[i].Velocity * DeltaTime;
+        }
+        
         //Update X position
         PlayerData.Pos.y += PlayerData.Velocity * DeltaTime;
 
         //Update running time
         PlayerData.RunningTime += DeltaTime;
-        Obstacles[0].RunningTime += DeltaTime;
-        
 
         if (PlayerData.RunningTime >= PlayerData.UpdateTime)
         {
@@ -112,26 +113,18 @@ int main()
             }
         }
 
-        if (Obstacles[0].RunningTime >= Obstacles[0].UpdateTime)
+        for (int i = 0; i < NumberOfObstacleArray; i++)
         {
-            Obstacles[0].RunningTime = 0.0;
-            Obstacles[0].Rec.x = Obstacles[0].Frame * Obstacles[0].Rec.width;
-            Obstacles[0].Frame++;
-            if (Obstacles[0].Frame > 7)
+            ObstacleArray[i].RunningTime += DeltaTime;
+            if (ObstacleArray[i].RunningTime >= ObstacleArray[i].UpdateTime)
             {
-                Obstacles[0].Frame = 0;
-            }
-        }
-
-        Obstacles[1].RunningTime += DeltaTime;
-        if (Obstacles[1].RunningTime >= Obstacles[1].UpdateTime)
-        {
-            Obstacles[1].RunningTime = 0.0;
-            Obstacles[1].Rec.x = Obstacles[1].Frame * Obstacles[1].Rec.width;
-            Obstacles[1].Frame++;
-            if (Obstacles[1].Frame > 7)
-            {
-                Obstacles[1].Frame = 0;
+                ObstacleArray[i].RunningTime = 0.0;
+                ObstacleArray[i].Rec.x = ObstacleArray[i].Frame * ObstacleArray[i].Rec.width;
+                ObstacleArray[i].Frame++;
+                if (ObstacleArray[i].Frame > 7)
+                {
+                    ObstacleArray[i].Frame = 0;
+                }
             }
         }
 
@@ -139,9 +132,11 @@ int main()
         DrawTextureRec(Player, PlayerData.Rec, PlayerData.Pos, WHITE);
 
         //Draw Obstacle
-        DrawTextureRec(Obstacle, Obstacles[0].Rec, Obstacles[0].Pos, WHITE);
-        DrawTextureRec(Obstacle, Obstacles[1].Rec, Obstacles[1].Pos, RED);
-        
+        for (int i = 0; i < NumberOfObstacleArray; i++)
+        {
+            DrawTextureRec(Obstacle, ObstacleArray[i].Rec, ObstacleArray[i].Pos, WHITE);
+        }
+
         //End Drawing
         EndDrawing();
     }
