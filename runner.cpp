@@ -45,8 +45,13 @@ int main()
     //Player Movement
     int Velocity{0};
 
+    //Background Textures
     Texture2D ScrollingBG = LoadTexture("textures/far-buildings.png");
+    Texture2D ScrollingMG = LoadTexture("textures/back-buildings.png");
+    Texture2D ScrollingFG = LoadTexture("textures/foreground.png");
     float BGSpeed{};
+    float MGSpeed{};
+    float FGSpeed{};
 
     //Physics
     const int Gravity{1'000};
@@ -96,15 +101,35 @@ int main()
 
         //Draw the Background
         BGSpeed -= 20 * DeltaTime;
+        MGSpeed -= 40 * DeltaTime;
+        FGSpeed -= 80 * DeltaTime;
 
         Vector2 BGPos{BGSpeed, 0.0};
-        DrawTextureEx(ScrollingBG, BGPos, 0.0, 2.0, WHITE);
         Vector2 BG2Pos{BGSpeed + ScrollingBG.width * 2, 0.0};
+        DrawTextureEx(ScrollingBG, BGPos, 0.0, 2.0, WHITE);
         DrawTextureEx(ScrollingBG, BG2Pos, 0.0, 2.0, WHITE);
+        Vector2 MGPos{MGSpeed, 0.0};
+        Vector2 MG2Pos{MGSpeed + ScrollingBG.width * 2, 0.0};
+        DrawTextureEx(ScrollingMG, MGPos, 0.0, 2.0, WHITE);
+        DrawTextureEx(ScrollingMG, MG2Pos, 0.0, 2.0, WHITE);
+        Vector2 FGPos{FGSpeed, 0.0};
+        Vector2 FG2Pos{FGSpeed + ScrollingBG.width * 2, 0.0};
+        DrawTextureEx(ScrollingFG, FGPos, 0.0, 2.0, WHITE);
+        DrawTextureEx(ScrollingFG, FG2Pos, 0.0, 2.0, WHITE);
 
         if (BGSpeed <= -ScrollingBG.width*2)
         {
             BGSpeed = 0.0;
+        }
+
+        if (FGSpeed <= -ScrollingFG.width*2)
+        {
+            FGSpeed = 0.0;
+        }
+
+        if (MGSpeed <= -ScrollingMG.width*2)
+        {
+            MGSpeed = 0.0;
         }
 
         //Apply gravity
@@ -159,5 +184,7 @@ int main()
     UnloadTexture(Player);
     UnloadTexture(Obstacle);
     UnloadTexture(ScrollingBG);
+    UnloadTexture(ScrollingMG);
+    UnloadTexture(ScrollingFG);
     CloseWindow();
 }
