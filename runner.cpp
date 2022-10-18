@@ -10,6 +10,28 @@ struct AnimData
     int Velocity;
 };
 
+bool IsOnGround(AnimData data, int WindowHeight)
+{
+    return data.Pos.y >= WindowHeight - data.Rec.height;
+}
+
+AnimData UpdateAnimData(AnimData data, float DeltaTime, int MaxFrame)
+{
+    //Update Running Time
+    data.RunningTime += DeltaTime;
+    if (data.RunningTime >= data.UpdateTime)
+    {
+        data.RunningTime = 0.0;
+        //Update Animation Frame
+        data.Rec.x = data.Frame * data.Rec.width;
+        data.Frame++;
+        if (data.Frame > MaxFrame)
+        {
+            data.Frame = 0;
+        }
+    }
+    return data;
+}
 
 int main()
 {
@@ -24,7 +46,7 @@ int main()
     int Velocity{0};
 
     //Physics
-    const int Gravity{1000};
+    const int Gravity{1'000};
     bool IsJumping{};
 
     //Obstacle Sprites
@@ -57,7 +79,7 @@ int main()
     0, //Float Running Time
     0}; //Velocity
     //Jump Height (Pixels/Second)
-    const int JumpHeight{600};
+    const int JumpHeight{500};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -70,7 +92,7 @@ int main()
         ClearBackground(BLUE);
 
         //Apply gravity
-        if(PlayerData.Pos.y >= WindowDimensions[1] - PlayerData.Rec.height)
+        if(IsOnGround(PlayerData, WindowDimensions[1]))
         {
             PlayerData.Velocity = 0;
             IsJumping = false;
@@ -96,36 +118,14 @@ int main()
         PlayerData.Pos.y += PlayerData.Velocity * DeltaTime;
 
         //Update running time
-        PlayerData.RunningTime += DeltaTime;
-
-        if (PlayerData.RunningTime >= PlayerData.UpdateTime)
+        if(!IsJumping)
         {
-            PlayerData.RunningTime = 0.0;
-            if (!IsJumping)
-            {
-                // update animation frame
-                PlayerData.Rec.x = PlayerData.Frame * PlayerData.Rec.width;
-                PlayerData.Frame++;
-                if (PlayerData.Frame > 5)
-                {
-                    PlayerData.Frame = 0;
-                }
-            }
+            PlayerData = UpdateAnimData(PlayerData,DeltaTime,5);
         }
 
         for (int i = 0; i < NumberOfObstacleArray; i++)
         {
-            ObstacleArray[i].RunningTime += DeltaTime;
-            if (ObstacleArray[i].RunningTime >= ObstacleArray[i].UpdateTime)
-            {
-                ObstacleArray[i].RunningTime = 0.0;
-                ObstacleArray[i].Rec.x = ObstacleArray[i].Frame * ObstacleArray[i].Rec.width;
-                ObstacleArray[i].Frame++;
-                if (ObstacleArray[i].Frame > 7)
-                {
-                    ObstacleArray[i].Frame = 0;
-                }
-            }
+            ObstacleArray[i] = UpdateAnimData(ObstacleArray[i],DeltaTime,7);
         }
 
         //Draw Player
