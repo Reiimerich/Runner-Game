@@ -60,7 +60,7 @@ int main()
     //Obstacle Sprites
     Texture2D Obstacle = LoadTexture("textures/12_nebula_spritesheet.png");
 
-    const int NumberOfObstacleArray{15};
+    const int NumberOfObstacleArray{3};
     AnimData ObstacleArray[NumberOfObstacleArray]{};
 
     for (int i = 0; i < NumberOfObstacleArray; i++)
@@ -72,10 +72,12 @@ int main()
         ObstacleArray[i].Pos.y = WindowDimensions[1] - Obstacle.height/8;
         ObstacleArray[i].Frame = 0;
         ObstacleArray[i].RunningTime = 0.0;
-        ObstacleArray[i].Velocity = -300;
+        ObstacleArray[i].Velocity = -200;
         ObstacleArray[i].UpdateTime = 0.0;
         ObstacleArray[i].Pos.x = WindowDimensions[0] + i * 300;
     }
+
+    float FinishLine{ ObstacleArray[NumberOfObstacleArray - 1].Pos.x};
 
     //Player Sprites
     Texture2D Player = LoadTexture("textures/scarfy.png");
@@ -88,6 +90,7 @@ int main()
     0}; //Velocity
     //Jump Height (Pixels/Second)
     const int JumpHeight{500};
+    bool collision{};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -100,9 +103,9 @@ int main()
         ClearBackground(BLUE);
 
         //Draw the Background
-        BGSpeed -= 20 * DeltaTime;
-        MGSpeed -= 40 * DeltaTime;
-        FGSpeed -= 80 * DeltaTime;
+        BGSpeed -= 10 * DeltaTime;
+        MGSpeed -= 20 * DeltaTime;
+        FGSpeed -= 30 * DeltaTime;
 
         Vector2 BGPos{BGSpeed, 0.0};
         Vector2 BG2Pos{BGSpeed + ScrollingBG.width * 2, 0.0};
@@ -154,6 +157,9 @@ int main()
         {
             ObstacleArray[i].Pos.x += ObstacleArray[i].Velocity * DeltaTime;
         }
+
+        //Update Finish Line
+        FinishLine += ObstacleArray[0].Velocity * DeltaTime;
         
         //Update X position
         PlayerData.Pos.y += PlayerData.Velocity * DeltaTime;
@@ -168,14 +174,48 @@ int main()
         {
             ObstacleArray[i] = UpdateAnimData(ObstacleArray[i],DeltaTime,7);
         }
-
-        //Draw Player
-        DrawTextureRec(Player, PlayerData.Rec, PlayerData.Pos, WHITE);
-
-        //Draw Obstacle
-        for (int i = 0; i < NumberOfObstacleArray; i++)
+        
+        for(AnimData Obstacle : ObstacleArray)
         {
-            DrawTextureRec(Obstacle, ObstacleArray[i].Rec, ObstacleArray[i].Pos, WHITE);
+            float pad{50};
+            Rectangle ObsRec{
+                Obstacle.Pos.x + pad,
+                Obstacle.Pos.y + pad,
+                Obstacle.Rec.width - 2*pad,
+                Obstacle.Rec.height - 2*pad
+            };
+
+            Rectangle PlayerRec{
+                PlayerData.Pos.x,
+                PlayerData.Pos.y,
+                PlayerData.Rec.width,
+                PlayerData.Rec.height
+            };
+
+            if(CheckCollisionRecs(ObsRec, PlayerRec))
+            {
+                collision = true;
+            }
+        }
+
+        if(collision)
+        {
+            DrawText("Game Over!", WindowDimensions[0]/3, WindowDimensions[1]/2, 32, YELLOW);
+        }
+        else if (PlayerData.Pos.x >= FinishLine)
+        {
+            DrawText("You Win!", WindowDimensions[0]/3, WindowDimensions[1]/2, 32, GREEN);
+        }
+        else
+        {
+            //Draw Player
+             DrawTextureRec(Player, PlayerData.Rec, PlayerData.Pos, WHITE);
+
+            //Draw Obstacle
+            for (int i = 0; i < NumberOfObstacleArray; i++)
+            {
+                DrawTextureRec(Obstacle, ObstacleArray[i].Rec, ObstacleArray[i].Pos, WHITE);
+            }
         }
 
         //End Drawing
