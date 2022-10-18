@@ -45,6 +45,9 @@ int main()
     //Player Movement
     int Velocity{0};
 
+    Texture2D ScrollingBG = LoadTexture("textures/far-buildings.png");
+    float BGSpeed{};
+
     //Physics
     const int Gravity{1'000};
     bool IsJumping{};
@@ -90,6 +93,19 @@ int main()
         //Start Drawing
         BeginDrawing();
         ClearBackground(BLUE);
+
+        //Draw the Background
+        BGSpeed -= 20 * DeltaTime;
+
+        Vector2 BGPos{BGSpeed, 0.0};
+        DrawTextureEx(ScrollingBG, BGPos, 0.0, 2.0, WHITE);
+        Vector2 BG2Pos{BGSpeed + ScrollingBG.width * 2, 0.0};
+        DrawTextureEx(ScrollingBG, BG2Pos, 0.0, 2.0, WHITE);
+
+        if (BGSpeed <= -ScrollingBG.width*2)
+        {
+            BGSpeed = 0.0;
+        }
 
         //Apply gravity
         if(IsOnGround(PlayerData, WindowDimensions[1]))
@@ -142,5 +158,6 @@ int main()
     }
     UnloadTexture(Player);
     UnloadTexture(Obstacle);
+    UnloadTexture(ScrollingBG);
     CloseWindow();
 }
